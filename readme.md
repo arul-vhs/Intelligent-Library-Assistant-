@@ -1,10 +1,4 @@
-Copy the content below and paste it directly into your README.md file on GitHub.
 
-code
-Markdown
-download
-content_copy
-expand_less
 # 📚 Intelligent Library Assistant - Backend & AI
 
 This is the AI-powered core of the Intelligent Library Assistant. It enables students to "talk to their books" by indexing PDF documents and using Generative AI to provide specific answers with page citations.
@@ -126,12 +120,3 @@ Error Handling: If the backend returns a 429 status code, it means the Gemini Fr
 
 Local Database: All uploaded books are saved in the /library_storage folder on the backend. They will persist even if the server restarts.
 
-🧑‍💻 Author
-
-Backend & AI Engineer - [Your Name/Github]
-
-code
-Code
-download
-content_copy
-expand_less
