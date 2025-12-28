@@ -1,70 +1,112 @@
-📚 Intelligent Library Assistant - API Documentation
-This is the backend "AI Brain" for the Library Assistant. It uses FastAPI, ChromaDB for local vector search, and Google Gemini 1.5 Flash for natural language generation.
-🌐 Server Details
-Base URL: http://localhost:8000
-Swagger UI (Interactive Docs): http://localhost:8000/docs
-CORS: Enabled for all origins (*).
-🛠 Prerequisites for Frontend Team
-If you need to run this backend locally:
-Install Python 3.10+
-Install dependencies:
+Copy the content below and paste it directly into your README.md file on GitHub.
+
 code
-Bash
+Markdown
+download
+content_copy
+expand_less
+# 📚 Intelligent Library Assistant - Backend & AI
+
+This is the AI-powered core of the Intelligent Library Assistant. It enables students to "talk to their books" by indexing PDF documents and using Generative AI to provide specific answers with page citations.
+
+---
+
+## 🛠 Tech Stack
+- **Framework:** FastAPI (Python)
+- **AI Model:** Google Gemini 1.5 Flash
+- **Vector Database:** ChromaDB (Local Persistence)
+- **Embeddings:** HuggingFace `all-MiniLM-L6-v2` (Local - no quota cost)
+- **PDF Processing:** pdfplumber & LangChain Text Splitters
+
+---
+
+## 🚀 Getting Started (Backend Setup)
+
+### 1. Prerequisites
+- Python 3.10 or higher
+- A Google AI Studio API Key ([Get it here](https://aistudio.google.com/))
+
+### 2. Installation
+Clone this repository and install the required packages:
+```bash
 pip install fastapi uvicorn google-generativeai chromadb pdfplumber langchain-text-splitters sentence-transformers python-multipart
-Run the server:
+3. Environment Setup
+
+Open main.py and replace the placeholder API key with your own:
+
+code
+Python
+download
+content_copy
+expand_less
+API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+4. Run the Server
 code
 Bash
+download
+content_copy
+expand_less
 python main.py
-(Note: On the very first run, it will download an 80MB embedding model. Please wait for the terminal to say "Uvicorn running").
-📡 API Endpoints
-1. Upload a Book
-Uploads a PDF file to the library. The backend will parse the PDF and index it for searching.
-URL: /upload
-Method: POST
-Content-Type: multipart/form-data
-Body:
-file: (Binary PDF file)
-Response (200):
-code
-JSON
-{
-  "message": "Successfully indexed biology_101.pdf",
-  "chunks_created": 142
-}
+
+The server will start at: http://localhost:8000
+Interactive Swagger Docs: http://localhost:8000/docs
+
+📡 API Documentation for Frontend (Vue/TS)
+1. Upload a PDF
+
+Process and index a new book into the library.
+
+Endpoint: POST /upload
+
+Body: multipart/form-data
+
+Key: file (Binary PDF)
+
 2. Ask a Question
-Queries the library for an answer. The AI will look through all uploaded books to find the relevant context.
-URL: /ask
-Method: GET
-Params:
-q: (string) The student's question.
-Response (200):
+
+Search the library and get an AI-generated answer.
+
+Endpoint: GET /ask
+
+Params: q=[your question]
+
+Response Format:
+
 code
 JSON
+download
+content_copy
+expand_less
 {
-  "answer": "Photosynthesis is the process used by plants... [Page 12]",
+  "answer": "The specific answer from the AI...",
   "sources": [
-    { "source": "biology_101.pdf", "page": 12 },
-    { "source": "biology_101.pdf", "page": 13 }
+    { "source": "biology_textbook.pdf", "page": 12 },
+    { "source": "biology_textbook.pdf", "page": 13 }
   ]
 }
-3. List All Books
-Returns a list of all unique PDF filenames currently indexed.
-URL: /list-books
+3. List Books
+
+Get a list of all currently indexed books.
+
+Endpoint: GET /list-books
+
 Method: GET
-Response (200):
-code
-JSON
-{
-  "books": ["biology_101.pdf", "chemistry_notes.pdf"]
-}
-4. Reset Library
-Wipes the entire database. Use this to start fresh during testing.
-URL: /reset
+
+4. Reset Database
+
+Wipe all indexed books and start fresh.
+
+Endpoint: DELETE /reset
+
 Method: DELETE
-🏗 TypeScript Interfaces
-You can use these interfaces in your Vue components:
+
+💡 Frontend Integration Notes (Vue + TypeScript)
+TypeScript Interfaces
 code
 TypeScript
+download
+content_copy
+expand_less
 export interface Source {
   source: string;
   page: number;
@@ -74,30 +116,22 @@ export interface AskResponse {
   answer: string;
   sources: Source[];
 }
+Important Tips:
 
-export interface BookListResponse {
-  books: string[];
-}
-⚠️ Important Notes
-Upload Latency: Indexing a PDF involves text extraction and vector math. For a 50-page PDF, it might take 10-15 seconds. Please implement a loading spinner in the UI.
-AI Latency: The /ask endpoint takes about 2-4 seconds as it communicates with Google Gemini.
-Error 429: If you hit the Gemini Free Tier limit, the API will return a 429 error. Please catch this and tell the user to wait 60 seconds.
-PDF Only: The backend currently only accepts files ending in .pdf.
-Example Axios Implementation (Vue)
+CORS: The backend is configured to allow all origins (*). No extra config needed in Vue.
+
+Loading States: Indexing PDFs takes time (approx. 0.5s per page). Please show a CircularProgress or Skeleton loader during /upload and /ask.
+
+Error Handling: If the backend returns a 429 status code, it means the Gemini Free Tier limit was reached. Suggest the user wait 60 seconds.
+
+Local Database: All uploaded books are saved in the /library_storage folder on the backend. They will persist even if the server restarts.
+
+🧑‍💻 Author
+
+Backend & AI Engineer - [Your Name/Github]
+
 code
-TypeScript
-import axios from 'axios';
-
-const API_BASE = "http://localhost:8000";
-
-// Asking a question
-async function getAnswer(query: string) {
-  try {
-    const response = await axios.get<AskResponse>(`${API_BASE}/ask`, {
-      params: { q: query }
-    });
-    return response.data;
-  } catch (error) {
-    console.error("AI Assistant Error", error);
-  }
-}
+Code
+download
+content_copy
+expand_less
