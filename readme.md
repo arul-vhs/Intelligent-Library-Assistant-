@@ -100,4 +100,4 @@ async function getAnswer(query: string) {
   } catch (error) {
     console.error("AI Assistant Error", error);
   }
-}"# Intelligent-Library-Assistant-" 
+}
